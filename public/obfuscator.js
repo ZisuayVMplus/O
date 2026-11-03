@@ -3,21 +3,18 @@
  *
  * Walks the source character-by-character (comment- and long-string aware),
  * finds every quoted string literal, decodes its escape sequences to raw
- * bytes, then re-emits it as a call to a tiny runtime decoder that rebuilds
- * the string with bit32.bxor at execution time. Everything else in the
- * source (identifiers, numbers, control flow, comments, long strings) is
- * left untouched.
+ * byte values, and re-emits each one as a plain numeric array passed to a
+ * tiny runtime decoder that rebuilds the string with string.char at
+ * execution time. No encryption layer — this stage only converts text into
+ * numbers, which is the step requested before anything fancier gets added.
+ * Everything else in the source (identifiers, control flow, comments, long
+ * strings) is left untouched.
  *
  * This runs entirely client-side — no source code ever leaves the browser.
  */
 
 const RoLock = (() => {
   const DECODER_NAME = '_RL';
-
-  function randomKey() {
-    // single-byte XOR key, 1-255 (0 would be a no-op)
-    return 1 + Math.floor(Math.random() * 255);
-  }
 
   function randomVarName(seed) {
     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -91,9 +88,8 @@ const RoLock = (() => {
     return bytes;
   }
 
-  function emitCall(bytes, key) {
-    const encoded = bytes.map((b) => b ^ key);
-    return `${DECODER_NAME}(${key},{${encoded.join(',')}})`;
+  function emitCall(bytes) {
+    return `${DECODER_NAME}({${bytes.join(',')}})`;
   }
 
   /**
@@ -168,8 +164,7 @@ const RoLock = (() => {
         }
         const end = j + 1; // past closing quote
         const bytes = decodeLuaEscapes(body);
-        const key = randomKey();
-        out += emitCall(bytes, key);
+        out += emitCall(bytes);
         count++;
         i = end;
         continue;
@@ -183,7 +178,7 @@ const RoLock = (() => {
   }
 
   function runtimeHeader() {
-    return `local function ${DECODER_NAME}(k,d) local t={} for i=1,#d do t[i]=string.char(bit32.bxor(d[i],k)) end return table.concat(t) end\n`;
+    return `local function ${DECODER_NAME}(d) local t={} for i=1,#d do t[i]=string.char(d[i]) end return table.concat(t) end\n`;
   }
 
   /**
