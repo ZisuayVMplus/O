@@ -6,46 +6,36 @@
 <title>RoLock — Lua string obfuscator</title>
 <link rel="icon" href="data:,">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="grain"></div>
-
 <header class="topbar">
   <div class="topbar-inner">
     <div class="brand">
-      <svg class="brand-mark" width="22" height="22" viewBox="0 0 24 24" fill="none">
-        <path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
-        <path d="M12 2V22M3 7L21 17M21 7L3 17" stroke="currentColor" stroke-width="1" opacity="0.4"/>
-      </svg>
+      <span class="brand-mark">[&nbsp;]</span>
       <span>RoLock</span>
     </div>
-    <a class="topbar-link" href="https://github.com/" target="_blank" rel="noopener">ดูซอร์สบน GitHub ↗</a>
+    <a class="topbar-link" href="https://github.com/" target="_blank" rel="noopener">ซอร์สบน GitHub ↗</a>
   </div>
 </header>
 
 <main>
   <section class="hero">
-    <div class="hero-text">
-      <h1>เข้ารหัส string ในสคริปต์ Roblox ของคุณ<br>ก่อนมันจะถูกอ่านทิ้ง</h1>
-      <p class="hero-sub">อัปโหลดไฟล์ .lua หรือ .luau — RoLock จะแทนที่ string literal ทุกตัวด้วยฟังก์ชันถอดรหัสที่ทำงานตอนรันจริง โค้ดไม่ถูกส่งออกจากเบราว์เซอร์เลยสักไบต์</p>
-    </div>
-    <div class="hero-demo" aria-hidden="true">
-      <div class="demo-panel">
-        <div class="demo-label">ก่อน</div>
-        <pre class="demo-code"><span class="tok-kw">local</span> msg = <span class="tok-str">"Welcome, player!"</span>
-<span class="tok-kw">print</span>(msg)</pre>
+    <p class="kicker">สเตจ 1 — string → ตัวเลข</p>
+    <h1>แปลงทุก string ในสคริปต์<br>ให้เป็นแถวตัวเลขก่อนใครจะอ่านมันออก</h1>
+    <p class="hero-sub">อัปโหลดไฟล์ .lua หรือ .luau — RoLock จะหา string literal ทุกตัวแล้วแทนที่ด้วยอาร์เรย์รหัสตัวอักษร ที่ประกอบกลับเป็นข้อความจริงตอนสคริปต์รัน ไม่มีการเข้ารหัสซับซ้อน แค่เปลี่ยนตัวหนังสือให้เป็นตัวเลขล้วน ๆ</p>
+
+    <div class="ledger" aria-hidden="true">
+      <div class="ledger-row ledger-letters">
+        <span>S</span><span>C</span><span>R</span><span>I</span><span>P</span><span>T</span>
       </div>
-      <div class="demo-arrow">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 12H19M19 12L13 6M19 12L13 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <div class="ledger-rule"></div>
+      <div class="ledger-row ledger-numbers">
+        <span>83</span><span>67</span><span>82</span><span>73</span><span>80</span><span>84</span>
       </div>
-      <div class="demo-panel">
-        <div class="demo-label">หลัง</div>
-        <pre class="demo-code"><span class="tok-kw">local</span> <span class="tok-fn">_qHyPfU</span> = <span class="tok-kw">function</span>(k,d) <span class="tok-kw">local</span> t={} <span class="tok-kw">for</span> i=1,#d <span class="tok-kw">do</span> t[i]=string.char(bit32.bxor(d[i],k)) <span class="tok-kw">end</span> <span class="tok-kw">return</span> table.concat(t) <span class="tok-kw">end</span>
-<span class="tok-kw">local</span> msg = <span class="tok-fn">_qHyPfU</span>(<span class="tok-num">91</span>,{<span class="tok-num">106,36,79,79,66,67,67,39,4,122,67,117,66,70,66,75,124</span>})</pre>
-      </div>
+      <div class="ledger-caption">string.char(83, 67, 82, 73, 80, 84) == "SCRIPT"</div>
     </div>
   </section>
 
@@ -67,7 +57,7 @@ print(msg)' spellcheck="false"></textarea>
     <div class="actions">
       <button id="obfuscateBtn" class="btn-primary" disabled>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2L3 7V17L12 22L21 17V7L12 2Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
-        เข้ารหัส string
+        แปลงเป็นตัวเลข
       </button>
       <span class="status" id="statusText"></span>
     </div>
@@ -86,16 +76,19 @@ print(msg)' spellcheck="false"></textarea>
 
   <section class="about">
     <div class="about-item">
+      <span class="about-num">01</span>
       <h3>ทำงานฝั่งไคลเอนต์ทั้งหมด</h3>
-      <p>ไม่มีการอัปโหลดสคริปต์ขึ้นเซิร์ฟเวอร์ การถอดและเข้ารหัสเกิดขึ้นในแท็บเบราว์เซอร์ของคุณเท่านั้น</p>
+      <p>ไม่มีการอัปโหลดสคริปต์ขึ้นเซิร์ฟเวอร์ การแปลงทั้งหมดเกิดขึ้นในแท็บเบราว์เซอร์ของคุณเท่านั้น</p>
     </div>
     <div class="about-item">
-      <h3>เฟสที่ 1: string เท่านั้น</h3>
-      <p>เปลี่ยน string literal ทุกตัวให้เป็นอาร์เรย์ byte ที่เข้ารหัส XOR แล้วถอดกลับด้วย <code>bit32.bxor</code> ตอนรันจริง — ตัวแปร ฟังก์ชัน และโครงสร้างโค้ดเดิมยังทำงานเหมือนเดิม</p>
+      <span class="about-num">02</span>
+      <h3>สเตจ 1: string → ตัวเลขล้วน ๆ</h3>
+      <p>เปลี่ยน string literal ทุกตัวให้เป็นอาร์เรย์รหัสตัวอักษร แล้วประกอบกลับด้วย <code>string.char</code> ตอนรันจริง ไม่มีการเข้ารหัสเพิ่ม — เก็บไว้เป็นสเตจถัดไป</p>
     </div>
     <div class="about-item">
+      <span class="about-num">03</span>
       <h3>ใช้งานได้บน Roblox / Luau</h3>
-      <p>โค้ดที่ได้ใช้ฟังก์ชันมาตรฐานของ Luau (<code>string.char</code>, <code>table.concat</code>, <code>bit32.bxor</code>) จึงรันได้ตรงบน Roblox โดยไม่ต้องพึ่งไลบรารีเสริม</p>
+      <p>โค้ดที่ได้ใช้ฟังก์ชันมาตรฐานของ Luau (<code>string.char</code>, <code>table.concat</code>) ล้วน ๆ จึงรันได้ตรงบน Roblox โดยไม่ต้องพึ่งไลบรารีเสริม</p>
     </div>
   </section>
 </main>
