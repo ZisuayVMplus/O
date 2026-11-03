@@ -1,0 +1,15 @@
+{
+  "name": "rolock",
+  "version": "1.0.0",
+  "description": "RoLock \u2014 stage 1 Lua string obfuscator for Roblox/Luau scripts, with a browser-based UI.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
